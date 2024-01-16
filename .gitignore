@@ -1,0 +1,29 @@
+# .gitignore
+
+# Ignore cache and compiled files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment
+venv/
+
+# Ignore Docker related files
+docker-compose.yaml
+
+# Ignore temporary and generated files
+cached/
+flagged/
+
+# Ignore system and hidden files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore user-specific files
+*.swp
+*.swo
+
+# Ignore environment-specific files
+*.env
