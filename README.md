@@ -12,7 +12,7 @@ This repository contains a chat interface utilizing the Ollama language model fo
 0. Clone this repository on your machine:
     ```bash
     git clone <repository_url>
-    cd rag-chatbot
+    cd rag-based-chatbot
     ```
 
 1. Install Ollama on your host machine:
