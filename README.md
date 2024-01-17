@@ -16,7 +16,7 @@ This repository contains a chat interface utilizing the Ollama language model fo
     ```
 
 1. Install Ollama on your host machine:
-    1.1 Install Ollama by following the instructions at `<link>`.
+    1.1 Install Ollama by following the instructions at `[<link>](https://ollama.ai/download/linux)`.
     
     1.2 Run the command to confirm the installation of Ollama server:
     ```bash
