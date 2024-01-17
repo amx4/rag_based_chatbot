@@ -16,6 +16,7 @@ This repository contains a chat interface utilizing the Ollama language model fo
     ```
 
 1. Install Ollama on your host machine:
+   
     1.1 Install Ollama by following the instructions at `https://ollama.ai/download/linux`.
     
     1.2 Run the command to confirm the installation of Ollama server:
@@ -28,19 +29,19 @@ This repository contains a chat interface utilizing the Ollama language model fo
     ollama pull mistral:instruct
     ```
     
-2. Create a virtual environment and install the required Python packages:
+3. Create a virtual environment and install the required Python packages:
     ```bash
     python3 -m venv venv
     source venv/bin/activate
     pip install -r requirements.txt
     ```
 
-3. Install additional packages for PDF support:
+4. Install additional packages for PDF support:
     ```bash
     pip install "unstructured[pdf]"
     ```
 
-4. After downloading the necessary dependencies, you can run the UI using:
+5. After downloading the necessary dependencies, you can run the UI using:
     ```bash
     python3 app.py
     ```
