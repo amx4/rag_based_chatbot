@@ -24,7 +24,8 @@ Thumbs.db
 # Ignore user-specific files
 *.swp
 *.swo
-
+my-key*
 # Ignore environment-specific files
 *.env
 startup.sh
+vertex_ai/
