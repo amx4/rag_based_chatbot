@@ -1,13 +1,13 @@
 import os
 import shutil
 from urllib.parse import urlparse
-import docx
 import gradio as gr
 from bs4 import BeautifulSoup as Soup
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader
+from langchain_community.document_loaders.csv_loader import CSVLoader
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.llms import Ollama
@@ -77,7 +77,7 @@ class AIAssistant:
         except Exception as e:
             print(f"Error creating document retrieval chain: {e}")
 
-    def _vectorize_data(self, url: str = None) :
+    def _vectorize_data(self, url: str = None, is_csv:bool = None) :
         """
         Vectorize the data, generate the vector index, and return the FAISS vector database.
         """
@@ -86,6 +86,8 @@ class AIAssistant:
             self.embeddings = self._get_embeddings()
             if url:
                 doc_chunks = self._get_doc_chunks_from_url(url)
+            elif is_csv:
+                doc_chunks = self._get_doc_chunks_from_csv()
             else:
                 doc_chunks = self._get_doc_chunks_from_file()
 
@@ -156,6 +158,20 @@ class AIAssistant:
         except Exception as e:
             print(f"Error getting doc chunks from file: {e}")
             return None
+    def _get_doc_chunks_from_csv(self):
+        """
+        Get document chunks from the test csv files in the data directory.
+        """
+
+        loader = CSVLoader(file_path="./csv_data/skyscanner.csv")
+
+        docs = loader.load()      
+        if docs:
+                text_splitter = RecursiveCharacterTextSplitter()
+                doc_chunks = text_splitter.split_documents(docs)
+                print(f"Got {len(doc_chunks)} doc chunks from the csv.")
+                return doc_chunks
+        
 
     def _move_files(self, source_path: str = None, destination_path: str = "cached") -> None:
         """
@@ -240,7 +256,10 @@ class AIAssistant:
                     file_name = os.path.basename(file_path)
                     destination_path = os.path.join(self.data_dir, file_name)
                     shutil.copy(file_path, destination_path)
-                    vector_db = self._vectorize_data()
+                    if "csv" in file_name.split(".")[-1]:
+                        vector_db = self._vectorize_data(is_csv=True)
+                    else:
+                        vector_db = self._vectorize_data()
                     if vector_db:
                         self._create_document_retrieval_chain(vector_db, self.prompt_template)
                         return "Successfully added the document into the knowledge base. You can ask questions now..."
@@ -259,7 +278,7 @@ def main() -> None:
 
     file_interface = gr.Interface(
         ai_assistant.save_files,
-        gr.File(file_count="multiple", file_types=[".docx", ".pdf"]), outputs="textbox"
+        gr.File(file_count="multiple", file_types=[".docx", ".pdf", ".csv"]), outputs="textbox"
     )
 
     link_interface = gr.Interface(ai_assistant.process_link, inputs="textbox", outputs="textbox")
@@ -268,7 +287,7 @@ def main() -> None:
 
     gr.TabbedInterface(
         [file_interface, link_interface, chatbot_interface], ["Upload Source Document", "Enter Source URL", "Chatbot"]
-    ).launch(share=True, debug=True)
+    ).launch(server_name = "0.0.0.0", share=True, debug=True)
 
 
 if __name__ == "__main__":
